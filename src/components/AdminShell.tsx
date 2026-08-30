@@ -7,6 +7,7 @@ const NAV = [
   { to: "/admin", label: "Підсумки" },
   { to: "/admin/quizzes", label: "Квізи" },
   { to: "/admin/units", label: "Підрозділи" },
+  { to: "/admin/users", label: "Адміністратори" },
 ] as const;
 
 export function AdminShell({

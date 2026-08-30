@@ -20,25 +20,36 @@ export async function listUnits() {
 }
 
 export async function loginParticipant(input: {
-  unitId: string;
+  unitName: string;
   callsign: string;
   deviceToken: string | null;
 }) {
   const db = await admin();
   const callsign = input.callsign.trim();
+  const unitName = input.unitName.trim();
   if (!callsign) throw new Error("Введіть позивний");
+  if (!unitName) throw new Error("Вкажіть підрозділ");
 
-  const { data: unit } = await db
+  let { data: unit } = await db
     .from("units")
     .select("id, name")
-    .eq("id", input.unitId)
+    .ilike("name", unitName)
     .maybeSingle();
-  if (!unit) throw new Error("Підрозділ не знайдено");
+
+  if (!unit) {
+    const { data: created, error } = await db
+      .from("units")
+      .insert({ name: unitName })
+      .select("id, name")
+      .single();
+    if (error) throw new Error(error.message);
+    unit = created;
+  }
 
   const { data: existing } = await db
     .from("participants")
     .select("id, callsign, device_token, unit_id")
-    .eq("unit_id", input.unitId)
+    .eq("unit_id", unit!.id)
     .ilike("callsign", callsign)
     .maybeSingle();
 
@@ -61,7 +72,7 @@ export async function loginParticipant(input: {
     token = token ?? crypto.randomUUID();
     const { data: created, error } = await db
       .from("participants")
-      .insert({ unit_id: input.unitId, callsign, device_token: token })
+      .insert({ unit_id: unit!.id, callsign, device_token: token })
       .select("id, callsign, device_token, unit_id")
       .single();
     if (error) throw new Error(error.message);
@@ -71,8 +82,8 @@ export async function loginParticipant(input: {
   const session: ParticipantSession = {
     id: participant!.id,
     callsign: participant!.callsign,
-    unit_id: unit.id,
-    unit_name: unit.name,
+    unit_id: unit!.id,
+    unit_name: unit!.name,
   };
   return { session, deviceToken: token! };
 }

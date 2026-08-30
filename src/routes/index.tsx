@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { apiListUnits, apiMyQuizzes, apiParticipantLogin } from "@/lib/quiz.functions";
+import { apiMyQuizzes, apiParticipantLogin } from "@/lib/quiz.functions";
 import {
   clearParticipantSession,
   getDeviceToken,
@@ -34,12 +34,11 @@ export const Route = createFileRoute("/")({
 function ParticipantHome() {
   const [participant, setParticipant] = useState<StoredParticipant | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [unitId, setUnitId] = useState("");
+  const [unitName, setUnitName] = useState("");
   const [callsign, setCallsign] = useState("");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const listUnits = useServerFn(apiListUnits);
   const login = useServerFn(apiParticipantLogin);
   const myQuizzes = useServerFn(apiMyQuizzes);
 
@@ -47,16 +46,6 @@ function ParticipantHome() {
     setParticipant(getStoredParticipant());
     setToken(getDeviceToken());
   }, []);
-
-  const unitsQuery = useQuery({
-    queryKey: ["units"],
-    queryFn: () => listUnits(),
-  });
-
-  useEffect(() => {
-    const first = unitsQuery.data?.units?.[0];
-    if (first && !unitId) setUnitId(first.id);
-  }, [unitsQuery.data, unitId]);
 
   const quizzesQuery = useQuery({
     queryKey: ["my-quizzes", token],
@@ -66,7 +55,7 @@ function ParticipantHome() {
 
   const loginMutation = useMutation({
     mutationFn: () =>
-      login({ data: { unitId, callsign, deviceToken: getDeviceToken() } }),
+      login({ data: { unitName, callsign, deviceToken: getDeviceToken() } }),
     onSuccess: (result) => {
       saveParticipantSession(result.deviceToken, result.session);
       setToken(result.deviceToken);
@@ -180,8 +169,8 @@ function ParticipantHome() {
             className="mt-6 space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
-              if (!unitId || !callsign.trim()) {
-                toast.error("Оберіть підрозділ і введіть позивний");
+              if (!unitName.trim() || !callsign.trim()) {
+                toast.error("Вкажіть підрозділ і позивний");
                 return;
               }
               loginMutation.mutate();
@@ -191,18 +180,13 @@ function ParticipantHome() {
               <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
                 Підрозділ
               </label>
-              <select
-                value={unitId}
-                onChange={(event) => setUnitId(event.target.value)}
+              <input
+                value={unitName}
+                onChange={(event) => setUnitName(event.target.value)}
+                maxLength={80}
+                placeholder="1-й батальйон"
                 className="w-full rounded-md border border-border bg-surface-2 px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
-              >
-                <option value="">— оберіть —</option>
-                {(unitsQuery.data?.units ?? []).map((unit) => (
-                  <option key={unit.id} value={unit.id}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">

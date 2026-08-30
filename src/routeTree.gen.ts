@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin.units'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminQuizzesIndexRouteImport } from './routes/_authenticated/admin.quizzes.index'
 import { Route as AuthenticatedAdminQuizzesQuizIdRouteImport } from './routes/_authenticated/admin.quizzes.$quizId'
 
@@ -47,6 +48,11 @@ const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
   path: '/admin/units',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminQuizzesIndexRoute =
   AuthenticatedAdminQuizzesIndexRouteImport.update({
     id: '/admin/quizzes/',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/admin/quizzes': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/_authenticated/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/quiz/$quizId'
     | '/admin/units'
+    | '/admin/users'
     | '/admin/'
     | '/admin/quizzes/$quizId'
     | '/admin/quizzes/'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/quiz/$quizId'
     | '/admin/units'
+    | '/admin/users'
     | '/admin'
     | '/admin/quizzes/$quizId'
     | '/admin/quizzes'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/quiz/$quizId'
     | '/_authenticated/admin/units'
+    | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/quizzes/$quizId'
     | '/_authenticated/admin/quizzes/'
@@ -171,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUnitsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/quizzes/': {
       id: '/_authenticated/admin/quizzes/'
       path: '/admin/quizzes'
@@ -190,6 +209,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminQuizzesQuizIdRoute: typeof AuthenticatedAdminQuizzesQuizIdRoute
   AuthenticatedAdminQuizzesIndexRoute: typeof AuthenticatedAdminQuizzesIndexRoute
@@ -197,6 +217,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminUnitsRoute: AuthenticatedAdminUnitsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminQuizzesQuizIdRoute: AuthenticatedAdminQuizzesQuizIdRoute,
   AuthenticatedAdminQuizzesIndexRoute: AuthenticatedAdminQuizzesIndexRoute,

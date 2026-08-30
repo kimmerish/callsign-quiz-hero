@@ -10,7 +10,7 @@ export const apiParticipantLogin = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
-        unitId: z.string().uuid(),
+        unitName: z.string().trim().min(1).max(80),
         callsign: z.string().trim().min(1).max(40),
         deviceToken: z.string().uuid().nullable().optional(),
       })
@@ -19,7 +19,7 @@ export const apiParticipantLogin = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { loginParticipant } = await import("./quiz.server");
     const result = await loginParticipant({
-      unitId: data.unitId,
+      unitName: data.unitName,
       callsign: data.callsign,
       deviceToken: data.deviceToken ?? null,
     });
