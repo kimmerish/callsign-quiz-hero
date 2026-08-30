@@ -10,33 +10,121 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin.units'
+import { Route as AuthenticatedAdminQuizzesIndexRouteImport } from './routes/_authenticated/admin.quizzes.index'
+import { Route as AuthenticatedAdminQuizzesQuizIdRouteImport } from './routes/_authenticated/admin.quizzes.$quizId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizQuizIdRoute = QuizQuizIdRouteImport.update({
+  id: '/quiz/$quizId',
+  path: '/quiz/$quizId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
+  id: '/admin/units',
+  path: '/admin/units',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminQuizzesIndexRoute =
+  AuthenticatedAdminQuizzesIndexRouteImport.update({
+    id: '/admin/quizzes/',
+    path: '/admin/quizzes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminQuizzesQuizIdRoute =
+  AuthenticatedAdminQuizzesQuizIdRouteImport.update({
+    id: '/admin/quizzes/$quizId',
+    path: '/admin/quizzes/$quizId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
+  '/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
+  '/admin/quizzes': typeof AuthenticatedAdminQuizzesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
+  '/_authenticated/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/quiz/$quizId'
+    | '/admin/units'
+    | '/admin/'
+    | '/admin/quizzes/$quizId'
+    | '/admin/quizzes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/quiz/$quizId'
+    | '/admin/units'
+    | '/admin'
+    | '/admin/quizzes/$quizId'
+    | '/admin/quizzes'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/quiz/$quizId'
+    | '/_authenticated/admin/units'
+    | '/_authenticated/admin/'
+    | '/_authenticated/admin/quizzes/$quizId'
+    | '/_authenticated/admin/quizzes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  QuizQuizIdRoute: typeof QuizQuizIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +136,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz/$quizId': {
+      id: '/quiz/$quizId'
+      path: '/quiz/$quizId'
+      fullPath: '/quiz/$quizId'
+      preLoaderRoute: typeof QuizQuizIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/units': {
+      id: '/_authenticated/admin/units'
+      path: '/admin/units'
+      fullPath: '/admin/units'
+      preLoaderRoute: typeof AuthenticatedAdminUnitsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/quizzes/': {
+      id: '/_authenticated/admin/quizzes/'
+      path: '/admin/quizzes'
+      fullPath: '/admin/quizzes/'
+      preLoaderRoute: typeof AuthenticatedAdminQuizzesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/quizzes/$quizId': {
+      id: '/_authenticated/admin/quizzes/$quizId'
+      path: '/admin/quizzes/$quizId'
+      fullPath: '/admin/quizzes/$quizId'
+      preLoaderRoute: typeof AuthenticatedAdminQuizzesQuizIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminQuizzesQuizIdRoute: typeof AuthenticatedAdminQuizzesQuizIdRoute
+  AuthenticatedAdminQuizzesIndexRoute: typeof AuthenticatedAdminQuizzesIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminUnitsRoute: AuthenticatedAdminUnitsRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminQuizzesQuizIdRoute: AuthenticatedAdminQuizzesQuizIdRoute,
+  AuthenticatedAdminQuizzesIndexRoute: AuthenticatedAdminQuizzesIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  QuizQuizIdRoute: QuizQuizIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
