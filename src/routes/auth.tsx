@@ -22,6 +22,17 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
 
+  function humanError(message: string) {
+    const m = message.toLowerCase();
+    if (m.includes("invalid login credentials"))
+      return "Невірна пошта або пароль. Якщо акаунта ще немає — натисніть «Немає акаунта? Зареєструватись».";
+    if (m.includes("weak") || m.includes("pwned"))
+      return "Пароль надто простий (є у базі витоків). Оберіть складніший пароль (мін. 8 символів, літери + цифри + символи).";
+    if (m.includes("already registered")) return "Ця пошта вже зареєстрована — увійдіть.";
+    if (m.includes("email not confirmed")) return "Пошта не підтверджена. Перевірте лист із підтвердженням.";
+    return message;
+  }
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setPending(true);
@@ -42,11 +53,12 @@ function AuthPage() {
       if (data.session) navigate({ to: "/admin", replace: true });
       else toast.info("Підтвердіть пошту, щоб увійти");
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error(humanError((error as Error).message));
     } finally {
       setPending(false);
     }
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
