@@ -16,7 +16,6 @@ import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin.units'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
-import { Route as ApiPublicBootstrapAdminRouteImport } from './routes/api/public/bootstrap-admin'
 import { Route as AuthenticatedAdminQuizzesIndexRouteImport } from './routes/_authenticated/admin.quizzes.index'
 import { Route as AuthenticatedAdminQuizzesQuizIdRouteImport } from './routes/_authenticated/admin.quizzes.$quizId'
 
@@ -54,11 +53,6 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicBootstrapAdminRoute = ApiPublicBootstrapAdminRouteImport.update({
-  id: '/api/public/bootstrap-admin',
-  path: '/api/public/bootstrap-admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminQuizzesIndexRoute =
   AuthenticatedAdminQuizzesIndexRouteImport.update({
     id: '/admin/quizzes/',
@@ -78,7 +72,6 @@ export interface FileRoutesByFullPath {
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -89,7 +82,6 @@ export interface FileRoutesByTo {
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/admin/quizzes': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -102,7 +94,6 @@ export interface FileRoutesById {
   '/quiz/$quizId': typeof QuizQuizIdRoute
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/api/public/bootstrap-admin': typeof ApiPublicBootstrapAdminRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/quizzes/$quizId': typeof AuthenticatedAdminQuizzesQuizIdRoute
   '/_authenticated/admin/quizzes/': typeof AuthenticatedAdminQuizzesIndexRoute
@@ -115,7 +106,6 @@ export interface FileRouteTypes {
     | '/quiz/$quizId'
     | '/admin/units'
     | '/admin/users'
-    | '/api/public/bootstrap-admin'
     | '/admin/'
     | '/admin/quizzes/$quizId'
     | '/admin/quizzes/'
@@ -126,7 +116,6 @@ export interface FileRouteTypes {
     | '/quiz/$quizId'
     | '/admin/units'
     | '/admin/users'
-    | '/api/public/bootstrap-admin'
     | '/admin'
     | '/admin/quizzes/$quizId'
     | '/admin/quizzes'
@@ -138,7 +127,6 @@ export interface FileRouteTypes {
     | '/quiz/$quizId'
     | '/_authenticated/admin/units'
     | '/_authenticated/admin/users'
-    | '/api/public/bootstrap-admin'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/quizzes/$quizId'
     | '/_authenticated/admin/quizzes/'
@@ -149,7 +137,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   QuizQuizIdRoute: typeof QuizQuizIdRoute
-  ApiPublicBootstrapAdminRoute: typeof ApiPublicBootstrapAdminRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -203,13 +190,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/bootstrap-admin': {
-      id: '/api/public/bootstrap-admin'
-      path: '/api/public/bootstrap-admin'
-      fullPath: '/api/public/bootstrap-admin'
-      preLoaderRoute: typeof ApiPublicBootstrapAdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/quizzes/': {
       id: '/_authenticated/admin/quizzes/'
       path: '/admin/quizzes'
@@ -251,7 +231,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   QuizQuizIdRoute: QuizQuizIdRoute,
-  ApiPublicBootstrapAdminRoute: ApiPublicBootstrapAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
