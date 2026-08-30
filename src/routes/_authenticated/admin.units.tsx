@@ -135,7 +135,7 @@ function UnitsPage() {
             className="rounded-lg border border-border bg-surface p-4"
             onSubmit={(event) => {
               event.preventDefault();
-              if (!unitName.trim()) return toast.error("Вкажіть назву підрозділу");
+              if (!unitName.trim()) { toast.error("Вкажіть назву підрозділу"); return; }
               addUnit.mutate();
             }}
           >
@@ -166,7 +166,7 @@ function UnitsPage() {
             onSubmit={(event) => {
               event.preventDefault();
               if (!participantUnit || !callsign.trim())
-                return toast.error("Оберіть підрозділ і вкажіть позивний");
+                { toast.error("Оберіть підрозділ і вкажіть позивний"); return; }
               addParticipant.mutate();
             }}
           >

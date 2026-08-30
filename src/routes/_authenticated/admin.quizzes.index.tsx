@@ -148,7 +148,7 @@ function QuizList() {
           className="h-fit rounded-lg border border-border bg-surface p-4"
           onSubmit={(event) => {
             event.preventDefault();
-            if (!title.trim()) return toast.error("Вкажіть назву");
+            if (!title.trim()) { toast.error("Вкажіть назву"); return; }
             createMutation.mutate();
           }}
         >

@@ -168,9 +168,9 @@ function QuestionEditor() {
           className="h-fit rounded-lg border border-border bg-surface p-4"
           onSubmit={(event) => {
             event.preventDefault();
-            if (!text.trim()) return toast.error("Введіть текст запитання");
+            if (!text.trim()) { toast.error("Введіть текст запитання"); return; }
             if (!answers.some((a) => a.is_correct && a.text.trim()))
-              return toast.error("Позначте правильну відповідь");
+              { toast.error("Позначте правильну відповідь"); return; }
             addMutation.mutate();
           }}
         >
