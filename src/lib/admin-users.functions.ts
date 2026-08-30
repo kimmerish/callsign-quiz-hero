@@ -51,12 +51,3 @@ export const apiDeleteAdmin = createServerFn({ method: "POST" })
     const { deleteAdmin } = await import("./admin-users.server");
     return await deleteAdmin(context.userId, data.userId);
   });
-
-export const apiBootstrapSuperAdmin = createServerFn({ method: "POST" })
-  .inputValidator((input) =>
-    z.object({ email: z.string().trim().email(), password: z.string().min(10) }).parse(input),
-  )
-  .handler(async ({ data }) => {
-    const { bootstrapSuperAdmin } = await import("./admin-users.server");
-    return await bootstrapSuperAdmin(data.email, data.password);
-  });
