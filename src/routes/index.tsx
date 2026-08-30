@@ -191,18 +191,13 @@ function ParticipantHome() {
               <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
                 Підрозділ
               </label>
-              <select
-                value={unitId}
-                onChange={(event) => setUnitId(event.target.value)}
+              <input
+                value={unitName}
+                onChange={(event) => setUnitName(event.target.value)}
+                maxLength={80}
+                placeholder="1-й батальйон"
                 className="w-full rounded-md border border-border bg-surface-2 px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
-              >
-                <option value="">— оберіть —</option>
-                {(unitsQuery.data?.units ?? []).map((unit) => (
-                  <option key={unit.id} value={unit.id}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
