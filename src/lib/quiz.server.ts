@@ -175,15 +175,56 @@ export async function getQuizForParticipant(deviceToken: string, quizId: string)
     .maybeSingle();
 
   let responses: { question_id: string; answer_id: string | null }[] = [];
+  let review: AttemptReviewItem[] = [];
   if (attempt) {
     const { data } = await db
       .from("responses")
       .select("question_id, answer_id")
       .eq("attempt_id", attempt.id);
     responses = data ?? [];
+    if (attempt.end_time) review = await buildReview(db, quizId, attempt.id);
   }
 
-  return { participant, quiz, questions: prepared, attempt, responses };
+  return { participant, quiz, questions: prepared, attempt, responses, review };
+}
+
+export type AttemptReviewItem = {
+  question_id: string;
+  question: string;
+  is_correct: boolean;
+  given: string | null;
+  correct: string | null;
+};
+
+async function buildReview(
+  db: SupabaseClient,
+  quizId: string,
+  attemptId: string,
+): Promise<AttemptReviewItem[]> {
+  const { data: questions } = await db
+    .from("questions")
+    .select("id, text, position, answers(id, text, is_correct)")
+    .eq("quiz_id", quizId)
+    .order("position");
+
+  const { data: responses } = await db
+    .from("responses")
+    .select("question_id, answer_id, is_correct")
+    .eq("attempt_id", attemptId);
+
+  return (questions ?? []).map((q) => {
+    const answers = (q.answers ?? []) as { id: string; text: string; is_correct: boolean }[];
+    const response = (responses ?? []).find((r) => r.question_id === q.id) ?? null;
+    const given = answers.find((a) => a.id === response?.answer_id) ?? null;
+    const correct = answers.find((a) => a.is_correct) ?? null;
+    return {
+      question_id: q.id,
+      question: q.text,
+      is_correct: Boolean(response?.is_correct),
+      given: given?.text ?? null,
+      correct: correct?.text ?? null,
+    };
+  });
 }
 
 export async function startAttempt(deviceToken: string, quizId: string) {
