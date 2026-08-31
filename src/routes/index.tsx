@@ -11,6 +11,7 @@ import {
   saveParticipantSession,
   type StoredParticipant,
 } from "@/lib/participant-session";
+import { BrandMark } from "@/lib/branding";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -72,12 +73,7 @@ function ParticipantHome() {
       <div className="min-h-screen bg-background text-foreground">
         <div className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur-sm">
           <div className="mx-auto flex h-14 max-w-[1000px] items-center justify-between px-6">
-            <div className="flex items-center gap-3">
-              <div className="grid size-7 place-items-center bg-accent font-display text-sm font-bold text-accent-foreground">
-                К
-              </div>
-              <span className="font-display font-semibold tracking-tight">КВІЗ-СИСТЕМА</span>
-            </div>
+            <BrandMark />
             <div className="flex items-center gap-3 font-mono text-[11px] text-muted-foreground">
               <span>
                 {participant.callsign} · {participant.unit_name}
@@ -145,10 +141,7 @@ function ParticipantHome() {
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center gap-3">
-          <div className="grid size-7 place-items-center bg-accent font-display text-sm font-bold text-accent-foreground">
-            К
-          </div>
-          <span className="font-display font-semibold tracking-tight">КВІЗ-СИСТЕМА</span>
+          <BrandMark />
           <span className="border-l border-border pl-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             Брифінг-система
           </span>

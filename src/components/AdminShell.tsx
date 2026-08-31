@@ -2,12 +2,14 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { BrandMark } from "@/lib/branding";
 
 const NAV = [
   { to: "/admin", label: "Підсумки" },
   { to: "/admin/quizzes", label: "Квізи" },
   { to: "/admin/units", label: "Підрозділи" },
   { to: "/admin/users", label: "Адміністратори" },
+  { to: "/admin/appearance", label: "Вигляд" },
 ] as const;
 
 export function AdminShell({
@@ -36,10 +38,7 @@ export function AdminShell({
       <div className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <div className="grid size-7 place-items-center bg-accent font-display text-sm font-bold text-accent-foreground">
-              К
-            </div>
-            <span className="font-display font-semibold tracking-tight">КВІЗ-СИСТЕМА</span>
+            <BrandMark />
             <span className="border-l border-border pl-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               Панель адміністратора
             </span>
