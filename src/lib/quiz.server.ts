@@ -142,7 +142,7 @@ export async function getQuizForParticipant(deviceToken: string, quizId: string)
 
   const { data: quiz } = await db
     .from("quizzes")
-    .select("id, title, description, is_published")
+    .select("id, title, description, is_published, draw_date, prize, rules")
     .eq("id", quizId)
     .maybeSingle();
   if (!quiz || !quiz.is_published) throw new Error("Квіз недоступний");
