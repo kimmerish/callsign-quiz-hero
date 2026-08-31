@@ -319,5 +319,7 @@ export async function finishAttempt(deviceToken: string, attemptId: string) {
     .select("id", { count: "exact", head: true })
     .eq("quiz_id", attempt.quiz_id);
 
-  return { attempt: data, total: count ?? 0 };
+  const review = await buildReview(db, attempt.quiz_id, attemptId);
+
+  return { attempt: data, total: count ?? 0, review };
 }
