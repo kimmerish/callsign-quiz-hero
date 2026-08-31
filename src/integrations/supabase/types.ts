@@ -46,6 +46,42 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: {
+          color_accent: string
+          color_background: string
+          color_foreground: string
+          color_surface: string
+          color_surface_2: string
+          id: boolean
+          logo_url: string | null
+          system_name: string
+          updated_at: string
+        }
+        Insert: {
+          color_accent?: string
+          color_background?: string
+          color_foreground?: string
+          color_surface?: string
+          color_surface_2?: string
+          id?: boolean
+          logo_url?: string | null
+          system_name?: string
+          updated_at?: string
+        }
+        Update: {
+          color_accent?: string
+          color_background?: string
+          color_foreground?: string
+          color_surface?: string
+          color_surface_2?: string
+          id?: boolean
+          logo_url?: string | null
+          system_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       attempts: {
         Row: {
           end_time: string | null
@@ -184,8 +220,11 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string | null
+          draw_date: string | null
           id: string
           is_published: boolean
+          prize: string | null
+          rules: string | null
           title: string
           updated_at: string
         }
@@ -193,8 +232,11 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          draw_date?: string | null
           id?: string
           is_published?: boolean
+          prize?: string | null
+          rules?: string | null
           title: string
           updated_at?: string
         }
@@ -202,8 +244,11 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string | null
+          draw_date?: string | null
           id?: string
           is_published?: boolean
+          prize?: string | null
+          rules?: string | null
           title?: string
           updated_at?: string
         }

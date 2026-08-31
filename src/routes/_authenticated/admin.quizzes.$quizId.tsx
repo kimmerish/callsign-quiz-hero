@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,12 +29,14 @@ function QuestionEditor() {
     { text: "", is_correct: false },
   ]);
 
+  const [brief, setBrief] = useState({ draw_date: "", prize: "", rules: "" });
+
   const quizQuery = useQuery({
     queryKey: ["admin-quiz", quizId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("quizzes")
-        .select("id, title, description")
+        .select("id, title, description, draw_date, prize, rules")
         .eq("id", quizId)
         .single();
       if (error) throw error;
@@ -53,6 +55,36 @@ function QuestionEditor() {
       if (error) throw error;
       return data;
     },
+  });
+
+  useEffect(() => {
+    const data = quizQuery.data;
+    if (data) {
+      setBrief({
+        draw_date: data.draw_date ? new Date(data.draw_date).toISOString().slice(0, 16) : "",
+        prize: data.prize ?? "",
+        rules: data.rules ?? "",
+      });
+    }
+  }, [quizQuery.data]);
+
+  const briefMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("quizzes")
+        .update({
+          draw_date: brief.draw_date ? new Date(brief.draw_date).toISOString() : null,
+          prize: brief.prize.trim() || null,
+          rules: brief.rules.trim() || null,
+        })
+        .eq("id", quizId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Брифінг збережено");
+      queryClient.invalidateQueries({ queryKey: ["admin-quiz", quizId] });
+    },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const invalidate = () =>
@@ -122,6 +154,51 @@ function QuestionEditor() {
     <AdminShell title={quizQuery.data?.title ?? "Квіз"} eyebrow="Редактор запитань">
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-3">
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+              Брифінг перед квізом
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Дата розіграшу
+                </label>
+                <input
+                  type="datetime-local"
+                  value={brief.draw_date}
+                  onChange={(event) => setBrief((p) => ({ ...p, draw_date: event.target.value }))}
+                  className="w-full rounded-md border border-border bg-surface-2 px-3 py-2 font-mono text-xs outline-none focus:border-accent"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Приз
+                </label>
+                <input
+                  value={brief.prize}
+                  onChange={(event) => setBrief((p) => ({ ...p, prize: event.target.value }))}
+                  placeholder="Наприклад: сертифікат"
+                  className="w-full rounded-md border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent"
+                />
+              </div>
+            </div>
+            <label className="mb-1.5 mt-3 block font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+              Правила перемоги
+            </label>
+            <textarea
+              value={brief.rules}
+              onChange={(event) => setBrief((p) => ({ ...p, rules: event.target.value }))}
+              rows={3}
+              className="w-full rounded-md border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent"
+            />
+            <button
+              onClick={() => briefMutation.mutate()}
+              disabled={briefMutation.isPending}
+              className="mt-3 rounded-md bg-accent px-4 py-2 font-mono text-xs font-medium text-accent-foreground disabled:opacity-60"
+            >
+              Зберегти брифінг
+            </button>
+          </div>
           {(questionsQuery.data ?? []).map((question, index) => (
             <div key={question.id} className="rounded-lg border border-border bg-surface p-4">
               <div className="flex items-start justify-between gap-3">

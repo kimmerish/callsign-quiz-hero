@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as QuizQuizIdRouteImport } from './routes/quiz.$quizId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminAppearanceRouteImport } from './routes/_authenticated/admin.appearance'
 import { Route as AuthenticatedAdminUnitsRouteImport } from './routes/_authenticated/admin.units'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminQuizzesIndexRouteImport } from './routes/_authenticated/admin.quizzes.index'
@@ -43,6 +44,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminAppearanceRoute =
+  AuthenticatedAdminAppearanceRouteImport.update({
+    id: '/admin/appearance',
+    path: '/admin/appearance',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUnitsRoute = AuthenticatedAdminUnitsRouteImport.update({
   id: '/admin/units',
   path: '/admin/units',
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/admin/appearance': typeof AuthenticatedAdminAppearanceRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -80,6 +88,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/admin/appearance': typeof AuthenticatedAdminAppearanceRoute
   '/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -92,6 +101,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/quiz/$quizId': typeof QuizQuizIdRoute
+  '/_authenticated/admin/appearance': typeof AuthenticatedAdminAppearanceRoute
   '/_authenticated/admin/units': typeof AuthenticatedAdminUnitsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/quiz/$quizId'
+    | '/admin/appearance'
     | '/admin/units'
     | '/admin/users'
     | '/admin/'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/quiz/$quizId'
+    | '/admin/appearance'
     | '/admin/units'
     | '/admin/users'
     | '/admin'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/quiz/$quizId'
+    | '/_authenticated/admin/appearance'
     | '/_authenticated/admin/units'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
@@ -176,6 +189,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/appearance': {
+      id: '/_authenticated/admin/appearance'
+      path: '/admin/appearance'
+      fullPath: '/admin/appearance'
+      preLoaderRoute: typeof AuthenticatedAdminAppearanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/units': {
       id: '/_authenticated/admin/units'
       path: '/admin/units'
@@ -208,6 +228,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminAppearanceRoute: typeof AuthenticatedAdminAppearanceRoute
   AuthenticatedAdminUnitsRoute: typeof AuthenticatedAdminUnitsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -216,6 +237,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminAppearanceRoute: AuthenticatedAdminAppearanceRoute,
   AuthenticatedAdminUnitsRoute: AuthenticatedAdminUnitsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
