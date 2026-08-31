@@ -10,6 +10,15 @@ import {
   apiStartAttempt,
 } from "@/lib/quiz.functions";
 import { getDeviceToken } from "@/lib/participant-session";
+import { BrandMark } from "@/lib/branding";
+
+type ReviewItem = {
+  question_id: string;
+  question: string;
+  is_correct: boolean;
+  given: string | null;
+  correct: string | null;
+};
 
 export const Route = createFileRoute("/quiz/$quizId")({
   head: () => ({
@@ -32,7 +41,12 @@ function QuizPage() {
   const [token, setToken] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<Record<string, string>>({});
-  const [finished, setFinished] = useState<{ score: number; total: number } | null>(null);
+  const [started, setStarted] = useState(false);
+  const [finished, setFinished] = useState<{
+    score: number;
+    total: number;
+    review: ReviewItem[];
+  } | null>(null);
 
   const getQuiz = useServerFn(apiGetQuiz);
   const startAttempt = useServerFn(apiStartAttempt);
@@ -56,7 +70,8 @@ function QuizPage() {
 
   const attemptQuery = useQuery({
     queryKey: ["attempt", quizId, token],
-    enabled: Boolean(token) && Boolean(quizQuery.data) && !quizQuery.data?.attempt?.end_time,
+    enabled:
+      started && Boolean(token) && Boolean(quizQuery.data) && !quizQuery.data?.attempt?.end_time,
     queryFn: () => startAttempt({ data: { deviceToken: token!, quizId } }),
   });
 
@@ -90,7 +105,12 @@ function QuizPage() {
 
   const finishMutation = useMutation({
     mutationFn: () => finishAttempt({ data: { deviceToken: token!, attemptId: attemptId! } }),
-    onSuccess: (result) => setFinished({ score: result.attempt.score, total: result.total }),
+    onSuccess: (result) =>
+      setFinished({
+        score: result.attempt.score,
+        total: result.total,
+        review: result.review as ReviewItem[],
+      }),
     onError: (error: Error) => toast.error(error.message),
   });
 
@@ -124,9 +144,12 @@ function QuizPage() {
   if (finished || alreadyDone) {
     const score = finished?.score ?? quizQuery.data?.attempt?.score ?? 0;
     const total = finished?.total ?? questions.length;
+    const review: ReviewItem[] =
+      finished?.review ?? ((quizQuery.data?.review ?? []) as ReviewItem[]);
+    const mistakes = review.filter((item) => !item.is_correct);
     return (
-      <div className="grid min-h-screen place-items-center bg-background px-6">
-        <div className="w-full max-w-md rounded-lg border border-border bg-surface p-8 text-center">
+      <div className="min-h-screen bg-background px-6 py-10">
+        <div className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-surface p-8 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">Результат</p>
           <p className="mt-4 font-display text-5xl font-bold">
             {score}
@@ -135,12 +158,105 @@ function QuizPage() {
           <p className="mt-3 font-mono text-[11px] text-muted-foreground">
             Квіз завершено. Дякуємо за проходження.
           </p>
+          {mistakes.length > 0 ? (
+            <div className="mt-8 text-left">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-destructive">
+                Помилки ({mistakes.length})
+              </p>
+              <ul className="mt-3 space-y-3">
+                {mistakes.map((item) => (
+                  <li
+                    key={item.question_id}
+                    className="rounded-md border border-border bg-surface-2 p-4"
+                  >
+                    <p className="font-display text-sm font-semibold">{item.question}</p>
+                    <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+                      Ваша відповідь:{" "}
+                      <span className="text-destructive">{item.given ?? "не обрано"}</span>
+                    </p>
+                    <p className="font-mono text-[11px] text-muted-foreground">
+                      Правильна відповідь:{" "}
+                      <span className="text-good">{item.correct ?? "—"}</span>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : review.length > 0 ? (
+            <p className="mt-6 font-mono text-[11px] text-good">Жодної помилки — ідеальний результат!</p>
+          ) : null}
           <Link
             to="/"
-            className="mt-6 inline-block rounded-md bg-accent px-4 py-2 font-mono text-xs font-medium text-accent-foreground"
+            className="mt-8 inline-block rounded-md bg-accent px-4 py-2 font-mono text-xs font-medium text-accent-foreground"
           >
             До списку квізів
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const info = quizQuery.data?.quiz;
+  if (!started) {
+    return (
+      <div className="min-h-screen bg-background px-6 py-10 text-foreground">
+        <div className="mx-auto w-full max-w-2xl">
+          <BrandMark className="mb-6" />
+          <div className="rounded-lg border border-border bg-surface p-8">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+              Брифінг перед квізом
+            </p>
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight">{info?.title}</h1>
+            {info?.description ? (
+              <p className="mt-2 text-sm text-muted-foreground">{info.description}</p>
+            ) : null}
+
+            <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-md border border-border bg-surface-2 p-4">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Дата розіграшу
+                </dt>
+                <dd className="mt-1 font-display text-lg font-semibold">
+                  {info?.draw_date
+                    ? new Date(info.draw_date).toLocaleString("uk-UA", {
+                        dateStyle: "long",
+                        timeStyle: "short",
+                      })
+                    : "Уточнюється"}
+                </dd>
+              </div>
+              <div className="rounded-md border border-border bg-surface-2 p-4">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Приз
+                </dt>
+                <dd className="mt-1 font-display text-lg font-semibold">
+                  {info?.prize ?? "Уточнюється"}
+                </dd>
+              </div>
+            </dl>
+
+            <div className="mt-4 rounded-md border border-border bg-surface-2 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                Правила перемоги
+              </p>
+              <p className="mt-2 whitespace-pre-line text-sm">
+                {info?.rules ??
+                  "Дайте якнайбільше правильних відповідей. Пройти квіз можна лише один раз з цього пристрою."}
+              </p>
+            </div>
+
+            <div className="mt-8 flex items-center gap-3">
+              <button
+                onClick={() => setStarted(true)}
+                className="rounded-md bg-accent px-6 py-2.5 font-mono text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              >
+                Розпочати
+              </button>
+              <Link to="/" className="font-mono text-[11px] text-muted-foreground hover:text-foreground">
+                Назад до списку
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );
